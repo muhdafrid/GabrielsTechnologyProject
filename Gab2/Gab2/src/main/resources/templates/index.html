@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gabriels</title>
+<link rel="stylesheet" href="/css/index.css">
+</head>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+	integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<body>
+	<!-- Navigation bar -->
+	<nav>
+		<h2>Gabriels Technology\Mohammed Afrid</h2>
+		<ul>
+			<li><a href="#home">Home</a></li>
+			<li><a href="/upload">Add Users</a></li>
+		</ul>
+	</nav>
+
+	<h1 class="heading">Our Customers!</h1>
+
+	<div class="alphabet-navigation">
+		| <a href="/">All</a> | <a href="/alphabet?letter=A">A</a> | <a
+			href="/alphabet?letter=B">B</a> | <a href="/alphabet?letter=C">C</a>
+		| <a href="/alphabet?letter=D">D</a> | <a href="/alphabet?letter=E">E</a>
+		| <a href="/alphabet?letter=F">F</a> | <a href="/alphabet?letter=G">G</a>
+		| <a href="/alphabet?letter=H">H</a> | <a href="/alphabet?letter=I">I</a>
+		| <a href="/alphabet?letter=J">J</a> | <a href="/alphabet?letter=K">K</a>
+		| <a href="/alphabet?letter=L">L</a> | <a href="/alphabet?letter=M">M</a>
+		| <a href="/alphabet?letter=N">N</a> | <a href="/alphabet?letter=O">O</a>
+		| <a href="/alphabet?letter=P">P</a> | <a href="/alphabet?letter=Q">Q</a>
+		| <a href="/alphabet?letter=R">R</a> | <a href="/alphabet?letter=S">S</a>
+		| <a href="/alphabet?letter=T">T</a> | <a href="/alphabet?letter=U">U</a>
+		| <a href="/alphabet?letter=V">V</a> | <a href="/alphabet?letter=W">W</a>
+		| <a href="/alphabet?letter=X">X</a> | <a href="/alphabet?letter=Y">Y</a>
+		| <a href="/alphabet?letter=Z">Z</a> |
+	</div>
+
+	<h1 class="" th:text="${message}"></h1>
+
+	<div class="card-grid">
+		<div th:each="card : ${cards}" class="card">
+		<div>
+			<img class="cardImage" th:src="${card.imageStr}" alt="Profile Image"
+				style="max-width: 200px; max-height: 200px;">
+				</div>
+			<div><h2 th:text="${card.fullName}"></h2></div>
+			<div><p th:text="${card.address}"></p></div>
+			<div><p th:text="${card.phoneNumber}"></p></div>
+			<div><p th:text="${card.phoneNumber1}"></p></div>
+			<div><p th:text="${card.mailId}"></p></div>
+		</div>
+	</div>
+
+</body>
+
+</html>
