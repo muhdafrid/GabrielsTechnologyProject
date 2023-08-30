@@ -1,0 +1,114 @@
+package com.example.Gab2.Controller;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import com.example.Gab2.DAO.UserRepository;
+import com.example.Gab2.Model.User;
+
+@Controller
+public class Gab2ApplicationController {
+
+	@Autowired
+	UserRepository uRepo;
+	
+	//Home Page With All Customers in Ascending Order
+	@RequestMapping("/")
+	String index(Model model) {
+		List<User> list = uRepo.findAllByOrderByFullNameAsc();
+		img(list);
+		model.addAttribute("cards", list);
+		return "index";
+	}
+	
+	//sort Customer With Their Staring Letter
+	@GetMapping("/alphabet")
+	public String filter(@RequestParam("letter") String letter, Model model) {
+		List<User> list = uRepo.findByFullNameStartsWith(letter);
+		if(list.isEmpty()) {
+			model.addAttribute("noResult", "Sorry No Result!");
+			return "index";
+		}
+		img(list);
+		model.addAttribute("cards", list);
+		return "index";
+	}
+	
+	//image encoding and Phone Number Spliting method
+	void img(List<User> list) {
+		for (User user : list) {
+			if(user.getPhoneNumber().contains(",")) {
+				String[] phoneNumbers = user.getPhoneNumber().split(",");
+				user.setPhoneNumber(phoneNumbers[0].trim());
+				user.setPhoneNumber1(phoneNumbers[1].trim());
+			}
+			if (user.getImage() == null) {
+				Path imagePath = Paths.get("C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/NullProfileImage.jpg");
+				byte[] imageBytes = null;
+				try {
+					imageBytes = Files.readAllBytes(imagePath);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				String base64Image = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(imageBytes);
+				user.setImageStr(base64Image);
+			}
+			else {
+				String base64Image = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(user.getImage());
+				user.setImageStr(base64Image);
+			}
+		}
+	}
+	
+	//Return Upload Page
+	@RequestMapping("/upload")
+	String upload() {
+		return "upload";
+	}
+	
+	//for my convenience to add Customers To Database
+	@PostMapping("/upload")
+	String upload(@RequestParam("fullname") String fullName,
+			@RequestParam("address") String address,
+			@RequestParam("phone1") String phone1,
+			@RequestParam("phone2") String phone2,
+			@RequestParam("email") String email,
+			@RequestParam("image") MultipartFile  image
+			) {
+		User user = new User();
+		user.setFullName(fullName);
+		user.setAddress(address);
+		if(phone2.trim().length() == 0) {
+			user.setPhoneNumber(phone1);
+		}
+		else {
+			user.setPhoneNumber(phone1 + ", " + phone2);
+		}
+		user.setMailId(email);
+		user.setDateUpdated(LocalDateTime.now());
+		if (!image.isEmpty()) {
+            try {
+                user.setImage(image.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+		else {
+			user.setImage(null);
+		}
+		uRepo.save(user);
+		return "upload";
+	}
+}
